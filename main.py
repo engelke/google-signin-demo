@@ -9,6 +9,9 @@ CLIENT_ID = 'Fill this in'
 CLIENT_SECRET = 'Fill this in'
 REDIRECT_URL = 'Fill this in'
 
+# This must be set to a chosen (preferably randomly) value
+SESSION_SECRET = b'Fill this in'
+
 
 from flask import Flask, redirect, render_template, request, session
 
@@ -19,13 +22,13 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as reqs
 
 app = Flask(__name__)
-
+app.secret_key = SESSION_SECRET
 
 @app.route('/')
 def homepage():
     if 'email' not in session:
         return redirect('/unauthenticated')
-    return render_template('index.html', email=email)
+    return render_template('index.html', email=session['email'])
 
 
 @app.route('/unauthenticated')
@@ -33,7 +36,7 @@ def unauthenticated():
     # Show a page with a link for the user to sign in with
     
     client_id = CLIENT_ID
-    redirect_uri = REDIRECT_URI
+    redirect_uri = REDIRECT_URL
     nonce = uuid.uuid4()
 
     url = 'https://accounts.google.com/signin/oauth?response_type=code&'
@@ -54,7 +57,7 @@ def callback():
 
     client_id = CLIENT_ID
     client_secret = CLIENT_SECRET
-    redirect_uri = REDIRECT_URI
+    redirect_uri = REDIRECT_URL
 
     resp = requests.post('https://oauth2.googleapis.com/token', data={
         'code': code,
@@ -64,8 +67,7 @@ def callback():
         'grant_type': 'authorization_code'
     })
 
-    id_token = resp.json()['id_token']
-    email = None
+    token = resp.json()['id_token']
 
     try:
         info = id_token.verify_oauth2_token(token, reqs.Request())
