@@ -30,7 +30,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as reqs
 
 app = Flask(__name__)
-app.secret_key = os.environ['SESSION_SECRET'].decode()  # Must be bytes
+app.secret_key = os.environ['SESSION_SECRET'].encode()  # Must be bytes
 
 
 @app.route('/')
