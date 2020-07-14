@@ -1,1 +1,9 @@
 runtime: python38
+
+# These environment variables must be provided by the Google Cloud Console,
+# defined in your application, or chosen randomly.
+env_variables:
+  CLIENT_ID: 'Fill this in'
+  CLIENT_SECRET: 'Fill this in'
+  REDIRECT_URI: 'Fill this in'
+  SESSION_SECRET: b'Fill this in'
